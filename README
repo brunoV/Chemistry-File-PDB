@@ -1,4 +1,4 @@
-Chemistry/File/PDB version 0.05
+Chemistry/File/PDB version 0.10
 ===============================
 
 This module reads PDB files. The PDB file format is commonly used to describe
@@ -27,6 +27,7 @@ DEPENDENCIES
 This module requires these other modules and libraries:
 
   Chemistry::MacroMol
+  Chemistry::Mol - 0.10
 
 COPYRIGHT AND LICENCE
 

@@ -7,5 +7,6 @@ WriteMakefile(
     'VERSION_FROM'	=> 'PDB.pm', # finds $VERSION
     'PREREQ_PM'		=> {
         'Chemistry::MacroMol' => 0.05,
+        'Chemistry::Mol' => '0.10',
     }, # e.g., Module::Name => 1.1
 );

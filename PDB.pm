@@ -1,11 +1,13 @@
 package Chemistry::File::PDB;
 
-$VERSION = '0.05';
+$VERSION = '0.10';
 
+use base "Chemistry::File";
 use Chemistry::MacroMol;
 use Chemistry::Domain;
 use Carp;
 use strict;
+use warnings;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
 =head1 NAME
@@ -49,8 +51,7 @@ implements the same interface as Chemistry::Mol.
 
 =cut
 
-Chemistry::Mol::register_type("pdb",  read => \&pdb_read,
-    is => \&is_pdb, );
+Chemistry::Mol->register_format(pdb => __PACKAGE__);
 
 =head1 FUNCTIONS
 
@@ -65,7 +66,8 @@ Chemistry::Mol object or a derived class.
 
 =cut
 
-sub pdb_read {
+sub parse_file {
+    my $class = shift;
     my $fname = shift;
     my %options = @_; # a molecule
     my @mols; 
@@ -96,13 +98,14 @@ sub pdb_read {
             }
             my $atom_name = $symbol.$suff;
             $atom_name =~ s/ //g;
-	    $domain->new_atom(
+	    my $a = $domain->new_atom(
 		symbol => $symbol, 
 		coords => [$x, $y, $z], 
 		#id    => "$mol->{id}-$res_name-a".++$n_atom,
 		id    => "a".++$n_atom,
                 name => $atom_name,
 	    );
+            $a->attr('pdb/residue', $domain->name.$seq_n);
 	}
     }
     close F;
@@ -118,7 +121,8 @@ any line beginning with "ATOM  ".
 
 =cut
 
-sub is_pdb {
+sub file_is {
+    my $class = shift;
     my $fname = shift;
     
     return 1 if $fname =~ /\.pdb$/i;
@@ -137,6 +141,8 @@ sub is_pdb {
 
 1;
 
+
+=back
 
 =head1 SEE ALSO
 

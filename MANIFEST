@@ -1,6 +1,7 @@
 Changes
-Makefile.PL
 MANIFEST
+Makefile.PL
 PDB.pm
 README
 t/1.t
+t/pod.t

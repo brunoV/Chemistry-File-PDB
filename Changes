@@ -1,6 +1,8 @@
 Revision history for Perl extension Chemistry::File::PDB.
 
-0.01  Fri Sep 26 15:40:46 2003
-	- original version; created by h2xs 1.22 with options
-		-AXb5.6.1 Chemistry::File::PDB
+0.10  Mon Nov 03 2003
+        - Works with Chemistry::Mol 0.10.
+
+0.05  Fri Sep 26 2003
+	- original release
 
