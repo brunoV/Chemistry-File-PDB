@@ -16,8 +16,8 @@ is($mol->atoms(48)->name,           'CG1',      '$mol->atoms(44)->name');
 is($mol->atoms(48)->symbol,         'C',        '$mol->atoms(44)->name');
 is($mol->atoms(48)->attr("pdb/residue_name"),   'VAL4',  
     '$mol->atoms(44)->attr("pdb/residue_name")');
-is($macromol->domains(4)->atoms_by_name('CG1')->attr("pdb/sequence_number"),
+is($macromol->domains(4)->atoms_by_name('CG1')->attr("pdb/serial_number"),
     48,  
-    q{$macromol->domains(4)->atoms_by_name('CG1')->attr("pdb/sequence_number")});
+    q{$macromol->domains(4)->atoms_by_name('CG1')->attr("pdb/serial_number")});
 
 

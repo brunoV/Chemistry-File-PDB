@@ -1,5 +1,3 @@
-REMARK    CL6b050232936022
-REMARK    Created by MCPRO 1.68
 ATOM      1  HN1 GLY     1      -7.509  -4.909  12.051
 ATOM      2  N   GLY     1      -7.546  -5.011  11.051
 ATOM      3  CA  GLY     1      -6.187  -4.955  10.487
@@ -18,7 +16,7 @@ ATOM     15  CG1 VAL     2      -2.333  -4.732   7.130
 ATOM     16  CG2 VAL     2      -3.455  -4.410   4.866
 ATOM     17  HA  VAL     2      -5.765  -4.634   6.365
 ATOM     18  HB  VAL     2      -3.777  -3.265   6.622
-ATOM     19  HG1 VAL     2      -1.519  -4.081   6.834
+ATOM     19 1HG  VAL     2      -1.519  -4.081   6.834
 ATOM     20  HG2 VAL     2      -2.417  -4.642   8.213
 ATOM     21  HG3 VAL     2      -2.040  -5.756   6.900
 ATOM     22  HG4 VAL     2      -2.657  -3.752   4.522

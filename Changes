@@ -1,5 +1,10 @@
 Revision history for Perl extension Chemistry::File::PDB.
 
+0.20  Fri Jul 02 2004
+        - Added name_is, write_string
+        - Changed "sequence_number" to "serial_number" for atoms to comply
+          with standard PDB nomenclature (INCOMPATIBLE CHANGE!!!)
+
 0.15  Fri Jun 18 2004
         - Added support for HETATM records.
         - Updated obsolete documentation.
