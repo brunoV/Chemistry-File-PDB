@@ -1,5 +1,13 @@
 Revision history for Perl extension Chemistry::File::PDB.
 
+0.15  Fri Jun 18 2004
+        - Added support for HETATM records.
+        - Updated obsolete documentation.
+        - Improved compatibility with Chemistry::File interface.
+        - Support for creating Chemistry::Mol objects.
+        - Fixed crash with sequence number of zero.
+        - Added some tests.
+
 0.10  Mon Nov 03 2003
         - Works with Chemistry::Mol 0.10.
 

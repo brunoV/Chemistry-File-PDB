@@ -3,5 +3,6 @@ MANIFEST
 Makefile.PL
 PDB.pm
 README
-t/1.t
+test.pdb
+t/pdb.t
 t/pod.t

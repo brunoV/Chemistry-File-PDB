@@ -1,17 +1,17 @@
-Chemistry/File/PDB version 0.10
+Chemistry/File/PDB version 0.15
 ===============================
 
 This module reads PDB files. The PDB file format is commonly used to describe
 proteins, particularly those stored in the Protein Data Bank
 (L<http://www.rcsb.org/pdb/>). The current version of this module only reads
-the ATOM records, ignoring everything else.
+the ATOM and HETATM records, ignoring everything else.
 
 This module automatically registers the 'pdb' format with Chemistry::Mol,
-so that PDB files may be identified and read by Chemistry::Mol::read_mol().
+so that PDB files may be identified and read by Chemistry::Mol->read().
 
-The PDB reader returns a Chemistry::MacroMol object, by default, but the
-user is free to give any object to the pdb_read subroutine, as long as it
-implements the same interface as Chemistry::Mol.
+The PDB reader returns a Chemistry::MacroMol object, by default, but the user
+is free to give any object to the read method, as long as it implements the
+same interface as Chemistry::Mol.
 
 INSTALLATION
 
@@ -26,8 +26,8 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  Chemistry::MacroMol
-  Chemistry::Mol - 0.10
+  Chemistry::MacroMol   0.05
+  Chemistry::Mol        0.24
 
 COPYRIGHT AND LICENCE
 
