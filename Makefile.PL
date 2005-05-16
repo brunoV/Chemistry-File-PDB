@@ -6,6 +6,6 @@ WriteMakefile(
     'VERSION_FROM'	=> 'PDB.pm', 
     'PREREQ_PM'		=> {
         'Chemistry::MacroMol'   => 0.05,
-        'Chemistry::Mol'        => '0.24',
+        'Chemistry::Mol'        => '0.30',
     },
 );

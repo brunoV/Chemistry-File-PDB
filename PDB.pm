@@ -1,11 +1,12 @@
 package Chemistry::File::PDB;
 
-$VERSION = '0.20';
-# $Id: PDB.pm,v 1.9 2004/07/03 00:56:15 itubert Exp $
+$VERSION = '0.21';
+# $Id: PDB.pm,v 1.11 2005/05/16 22:33:48 itubert Exp $
 
 use base qw(Chemistry::File);
 use Chemistry::MacroMol;
 use Chemistry::Domain;
+use Scalar::Util qw(weaken);
 use Carp;
 use strict;
 use warnings;
@@ -24,6 +25,16 @@ Chemistry::File::PDB - Protein Data Bank file format reader/writer
     # write a PDB file
     $macro_mol->write("out.pdb");
 
+    # read all models in a multi-model file
+    my @mols = Chemistry::MacroMol->read("models.pdb");
+
+    # read one model at a time
+    my $file = Chemistry::MacroMol->file("models.pdb");
+    $file->open;
+    while (my $mol = $file->read_mol($file->fh)) {
+        # do something with $mol
+    }
+
 =cut
 
 =head1 DESCRIPTION
@@ -31,7 +42,11 @@ Chemistry::File::PDB - Protein Data Bank file format reader/writer
 This module reads and writes PDB files. The PDB file format is commonly used to
 describe proteins, particularly those stored in the Protein Data Bank
 (L<http://www.rcsb.org/pdb/>). The current version of this module only uses the
-ATOM and HETATM records, ignoring everything else.
+following record types, ignoring everything else:
+
+    ATOM
+    HETATM
+    ENDMDL 
 
 This module automatically registers the 'pdb' format with Chemistry::Mol,
 so that PDB files may be identified and read by Chemistry::Mol->read(). For 
@@ -55,12 +70,19 @@ The residue type, such as "ARG".
 
 =item $domain->name
 
-The type and sequence number, such as "ARG114". The system doesn't deal with
-chains yet.
+The type and sequence number, such as "ARG114".
 
 =item $domain->attr("pdb/sequence_number")
 
 The residue sequence number as given in the PDB file.
+
+=item $domain->attr("pdb/chain_id")
+
+The chain to which this residue belongs (one character).
+
+=item $domain->attr("pdb/insertion_code")
+
+The residue insertion code (see the PDB specification for details).
 
 =item $atom->name
 
@@ -81,63 +103,68 @@ module tries to make it up (by counting the atoms or residues, for example).
 The default residue name for writing is UNK (unknown). Atom names are just the
 atomic symbols.
 
+=head2 Multi-model files
+
+If a PDB file has multiple models (separated by ENDMDL records), each call to
+read_mol will return one model.
+
 =cut
 
 Chemistry::Mol->register_format(pdb => __PACKAGE__);
 
-sub parse_file {
-    my $class = shift;
-    my $fname = shift;
-    my %options = @_;
-    my @mols; 
-    my ($n_atom);
-    my $n_res = 0;
+sub read_mol {
+    my ($self, $fh, %options) = @_;
+    return if $fh->eof;
+
     my $domain;
-
-    open F, $fname or croak "Could not open file $fname";
-
     my $mol_class = $options{mol_class} || "Chemistry::MacroMol";
     my $mol = $mol_class->new;
     my $is_macro = $mol->isa('Chemistry::MacroMol');
     $domain = $mol unless $is_macro;
-    while (<F>) {
+
+    local $_;
+    my $curr_residue = 0;
+    while (<$fh>) {
 	if (/^TER/) {
-	    #$mol->{name} = $name;  # create multiple molecules
-	    #push @mols, $mol;
-	    #$mol = new Chemistry::Mol(id => "mol". ++$n_mol);
-	    #$n_atom = 0;
-	} elsif (/^(HETATM|ATOM)/) {
-	    my ($atom_n, $symbol, $suff, $res_name, $seq_n, $x, $y, $z) = 
-		unpack "x6A5x1A2A2x1A3x2A4x4A8A8A8", $_;
+            # TODO read separated molecules?
+	} elsif (/^(?:HETATM|ATOM)/) {
+	    my ($atom_n, $symbol, $suff, $res_name, $ins_code, $chain_id,
+                $seq_n, $x, $y, $z
+            ) = unpack "x6A5x1A2A2x1A3A1A1A4x4A8A8A8", $_;
 	    #print "S:$symbol; N:$name; x:$x; y:$y; z:$z\n";
-            $seq_n =~ s/ //g;
-            if (!$domain || $seq_n != $n_res) {
+            $seq_n *= 1;
+            if (!$domain || $seq_n != $curr_residue) {
+                # new residue
                 if ($is_macro) {
                     $domain = Chemistry::Domain->new(
-                        parent => $mol, name => "$res_name$seq_n",
-                        type => $res_name, id => "d".$seq_n);
+                        parent => $mol,      name => "$res_name$seq_n",
+                        type   => $res_name);
                     $mol->add_domain($domain);
+                    weaken $domain;
                     $domain->attr('pdb/sequence_number', $seq_n);
+                    $domain->attr('pdb/chain_id',        $chain_id);
+                    $domain->attr('pdb/insertion_code',  $ins_code);
                 }
-                $n_res = $seq_n;
+                $curr_residue = $seq_n;
             }
             my $atom_name = $symbol.$suff;
             $atom_name =~ s/ //g;
-            $symbol =~ s/\d//g;
+            $symbol    =~ s/\d//g;
 	    my $a = $domain->new_atom(
 		symbol => $symbol, 
 		coords => [$x, $y, $z], 
-		id    => "a".++$n_atom,
                 name => $atom_name,
 	    );
             $a->attr('pdb/residue_name', "$res_name$seq_n");
             $a->attr('pdb/serial_number', $atom_n*1);
+            $a->attr('pdb/residue', $domain);
+	} elsif (/^ENDMDL/) {
+            return $mol;
 	}
     }
-    close F;
-
     return $mol;
 }
+
 
 sub name_is {
     my ($class, $fname) = @_;
@@ -204,7 +231,7 @@ sub write_string {
 
 =head1 VERSION
 
-0.20
+0.21
 
 =head1 SEE ALSO
 
@@ -220,6 +247,12 @@ L<Bio::Structure::IO::pdb>.
 =head1 AUTHOR
 
 Ivan Tubert-Brohman <itub@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2005 Ivan Tubert-Brohman. All rights reserved. This program is
+free software; you can redistribute it and/or modify it under the same terms as
+Perl itself.
 
 =cut
 
