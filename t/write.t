@@ -18,4 +18,5 @@ my ($got, $expected);
     $got = <F>;
 }
 
+$got =~ s/^.*?\n.*?\n//s; # chop off the header
 is($got, $expected, "pdb write test");

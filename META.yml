@@ -1,7 +1,7 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         Chemistry-File-PDB
-version:      0.21
+version:      0.23
 version_from: PDB.pm
 installdirs:  site
 requires:
@@ -9,4 +9,4 @@ requires:
     Chemistry::Mol:                0.30
 
 distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.17
+generated_by: ExtUtils::MakeMaker version 6.30
