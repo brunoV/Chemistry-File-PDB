@@ -5,7 +5,7 @@ use Chemistry::File::PDB;
 my $mol = Chemistry::Mol->read("test.pdb");
 my $macromol = Chemistry::MacroMol->read("test.pdb");
 
-plan tests => 9;
+plan tests => 10;
 
 is(scalar($mol->atoms),             139,        '$mol->atoms');
 is(scalar($macromol->atoms),        139,        '$macromol->atoms');
@@ -19,5 +19,9 @@ is($mol->atoms(48)->attr("pdb/residue_name"),   'VAL4',
 is($macromol->domains(4)->atoms_by_name('CG1')->attr("pdb/serial_number"),
     48,  
     q{$macromol->domains(4)->atoms_by_name('CG1')->attr("pdb/serial_number")});
+
+is($macromol->domains(4)->attr("pdb/chain_id"),
+   'A',
+   q{$macromol->domains(4)->attr("pdb/chain_id")});
 
 
