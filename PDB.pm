@@ -214,6 +214,7 @@ sub write_string {
             my $seq_n = $res->attr("pdb/sequence_number");
             $seq_n = $j++ unless defined $seq_n;
             my $res_name = substr($res->name, 0, 3) || "UNK";
+            my $chain_id = $res->attr("pdb/chain_id") || " ";
 
             for my $atom ($res->atoms) {
                 my $serial_n  = $res->attr("pdb/serial_number");
@@ -228,8 +229,8 @@ sub write_string {
                 $atom_name =~ /^(\dH|$symbol)(.{0,2})/;
                 #print "NAME: '$atom_name' ($1,$2); SYMBOL: '$symbol'\n";
                 $atom_name = sprintf "%2s%-2s", $1, $2;
-                $ret .= sprintf "ATOM  %5d %4s %-3s  %4d%1s   %8.3f%8.3f%8.3f\n",
-                    $serial_n, $atom_name, $res_name, $seq_n, $ins_code, @coords;
+                $ret .= sprintf "ATOM  %5d %4s %-3s %1s %3d%1s   %8.3f%8.3f%8.3f\n",
+                    $serial_n, $atom_name, $res_name, $chain_id, $seq_n, $ins_code, @coords;
             }
         }
     } else {
